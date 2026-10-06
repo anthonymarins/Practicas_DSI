@@ -4,13 +4,20 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
-  output   = "../src/generated/prisma"
+  provider = "prisma-client-js"
 }
 
 datasource db {
   provider = "sqlite"
   url      = env("DATABASE_URL")
+}
+
+model Tenant {
+  id        Int      @id @default(autoincrement())
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
 }
 
 model User {
@@ -22,6 +29,10 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   role      Role     @default(USER)
+  
+  // Relación con Tenant
+  tenantId  Int
+  tenant    Tenant   @relation(fields: [tenantId], references: [id])
 }
 
 enum Role {
